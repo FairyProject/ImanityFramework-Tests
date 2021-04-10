@@ -2,16 +2,12 @@ package org.imanity.framework.bukkit.test.condition;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
-import org.imanity.framework.Autowired;
 import org.imanity.framework.bukkit.test.TestInfo;
 import org.imanity.framework.bukkit.test.TestService;
 import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor
 public class TestConditionSpEL implements TestCondition {
-
-    @Autowired
-    private static TestService TEST_SERVICE;
 
     private final String condition;
 

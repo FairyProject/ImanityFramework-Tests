@@ -1,70 +1,46 @@
 package org.imanity.framework.bukkit.test.menu;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.imanity.framework.Autowired;
 import org.imanity.framework.bukkit.menu.Button;
-import org.imanity.framework.bukkit.menu.pagination.PaginatedMenu;
+import org.imanity.framework.bukkit.menu.ButtonBuilder;
+import org.imanity.framework.bukkit.menu.pagination.PaginatedListMenu;
 import org.imanity.framework.bukkit.test.TestInfo;
 import org.imanity.framework.bukkit.test.TestList;
-import org.imanity.framework.bukkit.test.TestService;
 import org.imanity.framework.bukkit.test.TestStatus;
 import org.imanity.framework.bukkit.util.Chat;
 import org.imanity.framework.bukkit.util.items.ItemBuilder;
-import org.imanity.framework.plugin.AbstractPlugin;
 import org.imanity.framework.util.CC;
-import org.imanity.framework.util.Stacktrace;
 
-import java.util.Map;
+import java.util.List;
 
 @RequiredArgsConstructor
-public class TestListMenu extends PaginatedMenu {
-
-    @Autowired
-    private static TestService TEST_SERVICE;
+public class TestListMenu extends PaginatedListMenu {
 
     private final TestList testList;
 
     @Override
-    public String getPrePaginatedTitle(Player player) {
+    public String getPrePaginatedTitle() {
         return "&eTests Run";
     }
 
     @Override
-    public Map<Integer, Button> getAllPagesButtons(Player player) {
-        final ImmutableMap.Builder<Integer, Button> map = this.newMap();
-
-        int slot = 0;
-        for (TestInfo testInfo : this.testList.getList()) {
-            map.put(slot++, new TestButton(testInfo));
-        }
-
-        return map.build();
+    public List<Button> getButtons() {
+        return this.transformToButtons(this.testList.getList(), TestButton::new);
     }
 
     @Override
-    public Map<Integer, Button> getGlobalButtons(Player player) {
-        final ImmutableMap.Builder<Integer, Button> map = this.newMap();
-
-        map.put(1, new Button() {
-            @Override
-            public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.EMERALD)
-                        .name("&aRun Entire Group")
-                        .build();
-            }
-
-            @Override
-            public void clicked(Player player, int slot, ClickType clickType, int hotbarButton) {
-                testList.startRunning(player);
-            }
-        });
-
-        return map.build();
+    protected void drawGlobal(boolean firstInitial) {
+        super.drawGlobal(firstInitial);
+        if (firstInitial) {
+            this.set(1, ButtonBuilder.builder()
+                    .item(new ItemBuilder(Material.EMERALD).name("&aRun Entire Group"))
+                    .callback((player1, slot, clickType, hotbarButton) -> testList.startRunning(player))
+                    .cancel().build());
+        }
     }
 
     @RequiredArgsConstructor
@@ -111,7 +87,7 @@ public class TestListMenu extends PaginatedMenu {
                 Chat.sendRaw(player, "&cThe Test Group enabled Run-In-Group, You must run test group instead!");
                 return;
             }
-            new TestRunConfirmMenu(testList, this.testInfo).openMenu(player);
+            new TestRunConfirmMenu(testList, this.testInfo).open(player);
         }
     }
 }

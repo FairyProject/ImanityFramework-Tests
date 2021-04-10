@@ -1,8 +1,10 @@
-package org.imanity.framework.bukkit.test;
+package org.imanity.framework.bukkit.test.command;
 
 import org.imanity.framework.Autowired;
 import org.imanity.framework.Component;
 import org.imanity.framework.bukkit.command.event.BukkitCommandEvent;
+import org.imanity.framework.bukkit.test.TestInfo;
+import org.imanity.framework.bukkit.test.TestService;
 import org.imanity.framework.bukkit.test.menu.TestPluginMenu;
 import org.imanity.framework.command.annotation.Command;
 import org.imanity.framework.command.annotation.CommandHolder;
@@ -17,7 +19,7 @@ public class TestCommand implements CommandHolder {
     @Command(names = "tests", permissionNode = "framework.admin")
     public void tests(BukkitCommandEvent event) {
         if (event.isPlayer()) {
-            new TestPluginMenu().openMenu(event.getPlayer());
+            new TestPluginMenu().open(event.getPlayer());
         }
     }
 

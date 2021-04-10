@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Comparator;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,9 +24,6 @@ import java.util.concurrent.CompletableFuture;
 public class TestInfo implements Comparable<TestInfo> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    @Autowired
-    private static TestService TEST_SERVICE;
 
     @Autowired
     private static BeanContext BEAN_CONTEXT;

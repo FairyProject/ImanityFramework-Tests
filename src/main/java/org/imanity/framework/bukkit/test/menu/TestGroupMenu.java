@@ -1,65 +1,51 @@
 package org.imanity.framework.bukkit.test.menu;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.imanity.framework.bukkit.menu.Button;
-import org.imanity.framework.bukkit.menu.pagination.PaginatedMenu;
+import org.imanity.framework.bukkit.menu.ButtonBuilder;
+import org.imanity.framework.bukkit.menu.pagination.PaginatedListMenu;
 import org.imanity.framework.bukkit.test.TestList;
 import org.imanity.framework.bukkit.test.TestPluginList;
 import org.imanity.framework.bukkit.util.items.ItemBuilder;
 import org.imanity.framework.util.CC;
 
-import java.util.Map;
+import java.util.List;
 
 @RequiredArgsConstructor
-public class TestGroupMenu extends PaginatedMenu {
+public class TestGroupMenu extends PaginatedListMenu {
 
     private final TestPluginList pluginList;
 
     @Override
-    public String getPrePaginatedTitle(Player player) {
+    public String getPrePaginatedTitle() {
         return "&eRun Tests - Find Groups";
     }
 
     @Override
-    public Map<Integer, Button> getAllPagesButtons(Player player) {
-        final ImmutableMap.Builder<Integer, Button> map = this.newMap();
-
-        int slot = 0;
-        for (TestList list : this.pluginList.getLists()) {
-            map.put(slot++, new ListButton(list));
-        }
-
-        return map.build();
+    public List<Button> getButtons() {
+        return this.transformToButtons(this.pluginList.getLists(), ListButton::new);
     }
 
     @Override
-    public Map<Integer, Button> getGlobalButtons(Player player) {
-        final ImmutableMap.Builder<Integer, Button> map = this.newMap();
+    protected void drawGlobal(boolean firstInitial) {
+        super.drawGlobal(firstInitial);
+        if (!firstInitial) {
+            return;
+        }
 
-        map.put(1, new Button() {
-            @Override
-            public ItemStack getButtonItem(Player player) {
-                return new ItemBuilder(Material.BOOK_AND_QUILL)
-                        .name("&eUngrouped Tests")
-                        .build();
-            }
-
-            @Override
-            public void clicked(Player player, int slot, ClickType clickType, int hotbarButton) {
-                new TestListMenu(pluginList.getDefaultList()).openMenu(player);
-            }
-        });
-
-        return map.build();
+        this.set(1, ButtonBuilder.builder()
+                .item(new ItemBuilder(Material.BOOK_AND_QUILL).name("&eTests with No Group"))
+                .callback((ignored, slot, clickType, hotbarButton) -> new TestListMenu(pluginList.getDefaultList()).open(player))
+                .cancel().build()
+        );
     }
 
     @RequiredArgsConstructor
-    private class ListButton extends Button {
+    private static class ListButton extends Button {
 
         private final TestList testList;
 
@@ -79,7 +65,7 @@ public class TestGroupMenu extends PaginatedMenu {
 
         @Override
         public void clicked(Player player, int slot, ClickType clickType, int hotbarButton) {
-            new TestListMenu(this.testList).openMenu(player);
+            new TestListMenu(this.testList).open(player);
         }
     }
 

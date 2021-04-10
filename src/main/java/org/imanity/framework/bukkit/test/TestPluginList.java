@@ -1,6 +1,5 @@
 package org.imanity.framework.bukkit.test;
 
-import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.imanity.framework.Autowired;
@@ -20,9 +19,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TestPluginList {
-
-    @Autowired
-    private static TestService TEST_SERVICE;
 
     @Autowired
     private static BeanContext BEAN_CONTEXT;
@@ -76,7 +72,7 @@ public class TestPluginList {
                 }
 
                 final String name = test.value();
-                if (!TEST_SERVICE.canAdd(name)) {
+                if (!TestService.INSTANCE.canAdd(name)) {
                     continue;
                 }
 
@@ -104,7 +100,7 @@ public class TestPluginList {
                         testList
                 );
                 testList.addTest(testInfo);
-                TEST_SERVICE.addTest(testInfo);
+                TestService.INSTANCE.addTest(testInfo);
 
                 TestService.LOGGER.info("Found Test " + test.value() + " from Plugin " + plugin.getName());
             } catch (Throwable throwable) {

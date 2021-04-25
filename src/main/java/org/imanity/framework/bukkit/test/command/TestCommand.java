@@ -1,20 +1,19 @@
 package org.imanity.framework.bukkit.test.command;
 
-import org.imanity.framework.Autowired;
 import org.imanity.framework.Component;
+import org.imanity.framework.DependencyType;
+import org.imanity.framework.ServiceDependency;
+import org.imanity.framework.ServiceDependencyType;
 import org.imanity.framework.bukkit.command.event.BukkitCommandEvent;
 import org.imanity.framework.bukkit.test.TestInfo;
-import org.imanity.framework.bukkit.test.TestService;
 import org.imanity.framework.bukkit.test.menu.TestPluginMenu;
 import org.imanity.framework.command.annotation.Command;
 import org.imanity.framework.command.annotation.CommandHolder;
 import org.imanity.framework.command.annotation.Parameter;
 
 @Component
+@ServiceDependency(dependencies = "test", type = @DependencyType(ServiceDependencyType.SUB_DISABLE))
 public class TestCommand implements CommandHolder {
-
-    @Autowired
-    private TestService testService;
 
     @Command(names = "tests", permissionNode = "framework.admin")
     public void tests(BukkitCommandEvent event) {
